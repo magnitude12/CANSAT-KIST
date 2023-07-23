@@ -1,40 +1,36 @@
-const int trigPin = 5;
-const int echoPin = 4;
-const int sipaaLED=12;
-#define SOUND_SPEED 0.033
+  
+ #include "DHT.h"
 
-long duration;
-float distanceCm;
+#define DHTPIN 2  
+
+#define DHTTYPE DHT11
+
+DHT dht(DHTPIN, DHTTYPE);
+int SipaaLED=12;
 
 void setup() {
-  Serial.begin(115200);
-  pinMode(trigPin, OUTPUT);
-  pinMode(echoPin, INPUT);
-  pinMode(sipaaLED,OUTPUT);
- 
+  Serial.begin(115200); 
+  Serial.println("BEGIN!");
+  dht.begin();
+  pinMode (SipaaLED,OUTPUT);
 }
 
 void loop() {
-  digitalWrite(trigPin, LOW);
-  delayMicroseconds(2);
-  digitalWrite(trigPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
-  
-  duration = pulseIn(echoPin, HIGH);
-  distanceCm = duration * SOUND_SPEED/2;
-  Serial.print("Distance (Cm): ");
-  Serial.println(distanceCm);
-  if(distanceCm<7)
-  {
-    digitalWrite(sipaaLED,HIGH);
-    
-  }
-  else{
-    digitalWrite(sipaaLED,LOW);
-    
-  }
-
-  
   delay(1000);
+
+  float h = dht.readHumidity();
+  float t = dht.readTemperature();
+ 
+  Serial.print("Humidity: "); 
+  Serial.print(h);
+  Serial.print("Temperature: "); 
+  Serial.print(t);
+  Serial.print("\n");
+  if(t<40){
+    digitalWrite(SipaaLED,HIGH);
+  }
+    else{
+      digitalWrite(SipaaLED,LOW);
+    }
+  
 }
